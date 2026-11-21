@@ -1,4 +1,4 @@
-> **Unofficial iOS 15 backport:** This fork adapts [AnimaSeek](https://github.com/alexandreteles/AnimaSeek) for older iPhones, including iPhone 7 on iOS 15.8.4. Build and installation details are in [IOS15.md](IOS15.md). The upstream releases and attestations described below apply to upstream builds, not this fork. Device validation is still pending.
+> **Unofficial iOS 15 backport:** This fork adapts [AnimaSeek](https://github.com/alexandreteles/AnimaSeek) for older iPhones, including iPhone 7 on iOS 15.8.4. Installation, launch, a download, and playback have been user-confirmed on that device; broader validation remains pending. Build details and known display issues are in [IOS15.md](IOS15.md). The upstream releases and attestations described below apply to upstream builds, not this fork.
 
  <div align="center">
 

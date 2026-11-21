@@ -26,7 +26,9 @@ The [hosted build](https://github.com/tranquil222/AnimaSeek-iOS15/actions/runs/4
 - The IPA's bundle and native executable both declare a minimum of iOS 15.0; the executable is unencrypted. The verification was repeated after downloading the artifact, and its SHA-256 matched.
 - `AnimaSeek-iOS15.ipa`: 17,016,466 bytes, SHA-256 `db87d7cc88de487982b0bdafdc6a130c04e58d6614a87df074d4608612d06fc7`. The bundle retains upstream's checked-in display version `3.7.4` and build `136`; identify this backport by source commit and checksum.
 
-Physical iPhone validation is still pending. Builds and unit tests do not establish launch, UIKit interaction, or real-network behavior on iOS 15.
+On 2026-11-21, the device owner confirmed that installation and launch succeeded on an iPhone 7 running iOS 15.8.4, and that a file downloaded and played successfully. This is a user-reported smoke check, not an independently observed comprehensive device test. Background expiration/resume and the complete appearance/accessibility matrix remain unverified.
+
+The owner reported that the file action menu (Download / Add Paused / Browse at Location) and folder action menu (Show Files / Download Folder) were too transparent. These screens use native `UIAlertController` action sheets. A suggested app-only mitigation is **Settings → Accessibility → Per-App Settings → Add App → AnimaSeek**, then **AnimaSeek → Reduce Transparency → On**. Reopen the app and the menu after changing it. The effect on this device has not yet been confirmed; no application code was changed for this report. See [Apple's per-app settings guide](https://support.apple.com/en-gb/guide/iphone/iph1f48544ab/ios) and [Reduce Transparency description](https://www.apple.com/accessibility/features/).
 
 On a device, check cold launch, sign-in with your own Soulseek account, search, a permitted test download, background pause/foreground resume, light/dark appearance, and larger text. Automated checks use mocks and never sign in to the live Soulseek network.
 
