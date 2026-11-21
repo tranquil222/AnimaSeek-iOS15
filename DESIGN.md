@@ -405,7 +405,7 @@ Honest ledger of what the shipped app does *not* yet satisfy. These are defects 
 - The upstream visual specification describes iOS 26. On older systems, native tinted/filled buttons and continuous CALayer corners replace glass and newer corner configurations. Composer borders continue to follow light/dark appearance through legacy trait callbacks.
 - On iOS 15/16, `ContentStateView` uses semantic colors, Dynamic Type labels, a spinner or symbol, and the same optional recovery action in a centered stack. List backgrounds restore their previous view when cleared; other screens place the state inside the safe area. Search keeps its native navigation-bar search placement on iOS 15 and presents all filter commands in one menu.
 - Before iOS 26, continued-processing tasks are unavailable. Transfers use the existing short background grace period, checkpoint/pause, and foreground resume. Settings and the once-per-run notice explicitly tell the user to keep the app open for sustained transfers.
-- Verification owed: physical iPhone 7 launch, sign-in, search, download, background expiration/resume, and the older-system UI in light/dark and accessibility text sizes. Compile-time availability analysis and portable tests do not establish these runtime behaviors.
+- Verification owed: physical iPhone 7 launch, sign-in, search, download, background expiration/resume, and the older-system UI in light/dark and accessibility text sizes. The strict mock simulator and real ARM64 Release builds passed on 2026-11-21, as did 649 portable/protocol tests and the packaged native deployment-floor check; see [IOS15.md](IOS15.md) for the build and artifact identity. These checks do not establish older-device runtime behaviors.
 
 **Visual system**
 

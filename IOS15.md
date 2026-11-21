@@ -19,7 +19,14 @@ Before packaging, `scripts/verify-ios15-bundle.py` checks the bundle identifier 
 
 ## Validation status
 
-The portable regression suite has passed with 628 tests. A separate Linux compile-only check against Microsoft.iOS reference assemblies passed API availability analysis with an iOS 15 floor. These checks do not run UIKit or native AOT code. The hosted Mac build and physical iPhone validation are pending.
+The [hosted build](https://github.com/tranquil222/AnimaSeek-iOS15/actions/runs/44900598116) passed on 2026-11-21 for source commit `1e5da24b4e8709597652697df4d4aaf1ca9462e4`:
+
+- 628 portable regression tests and 21 protocol AOT regression tests passed, both locally and on GitHub.
+- The strict `Debug Mock` simulator build and real ARM64 Release build passed with full trimming and no interpreter. Existing compiler warnings remain; these were not warning-free builds.
+- The IPA's bundle and native executable both declare a minimum of iOS 15.0; the executable is unencrypted. The verification was repeated after downloading the artifact, and its SHA-256 matched.
+- `AnimaSeek-iOS15.ipa`: 17,016,466 bytes, SHA-256 `db87d7cc88de487982b0bdafdc6a130c04e58d6614a87df074d4608612d06fc7`. The bundle retains upstream's checked-in display version `3.7.4` and build `136`; identify this backport by source commit and checksum.
+
+Physical iPhone validation is still pending. Builds and unit tests do not establish launch, UIKit interaction, or real-network behavior on iOS 15.
 
 On a device, check cold launch, sign-in with your own Soulseek account, search, a permitted test download, background pause/foreground resume, light/dark appearance, and larger text. Automated checks use mocks and never sign in to the live Soulseek network.
 
