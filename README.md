@@ -1,3 +1,5 @@
+> **Unofficial iOS 15 backport:** This fork adapts [AnimaSeek](https://github.com/alexandreteles/AnimaSeek) for older iPhones, including iPhone 7 on iOS 15.8.4. Build and installation details are in [IOS15.md](IOS15.md). The upstream releases and attestations described below apply to upstream builds, not this fork. Device validation is still pending.
+
  <div align="center">
 
 <p><img src="Seeker.iOS/Assets.xcassets/AppIcon.appiconset/AppIcon-Any-1024.png" width="170" alt="AnimaSeek phoenix logo"></p>

@@ -9,7 +9,7 @@ namespace AnimaSeek.iOS.UI.Screens.About;
 /// <summary>Shows AnimaSeek's product identity, version, source, and permanent legal route.</summary>
 internal sealed class AboutViewController : UIViewController
 {
-    private const string SourceUrl = "https://github.com/alexandreteles/AnimaSeek";
+    private const string SourceUrl = "https://github.com/tranquil222/AnimaSeek-iOS15";
     private readonly IAppRouter router;
 
     /// <summary>Creates the About destination.</summary>
@@ -46,8 +46,15 @@ internal sealed class AboutViewController : UIViewController
             AccessibilityIgnoresInvertColors = true,
             ClipsToBounds = true,
         };
-        logo.CornerConfiguration = UICornerConfiguration.CreateUniformCorners(
-            UICornerRadius.CreateContainerConcentric());
+        if (OperatingSystem.IsIOSVersionAtLeast(26))
+        {
+            logo.CornerConfiguration = UICornerConfiguration.CreateUniformCorners(
+                UICornerRadius.CreateContainerConcentric());
+        }
+        else
+        {
+            UIKitFactory.ApplyRoundedContentCorners(logo);
+        }
         logo.SetContentCompressionResistancePriority((float)UILayoutPriority.DefaultLow, UILayoutConstraintAxis.Vertical);
         var title = UIKitFactory.Label(UIFontTextStyle.Title1);
         title.Text = AppStrings.Get("app_name");

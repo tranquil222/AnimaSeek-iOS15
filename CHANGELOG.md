@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Added an unofficial iOS 15 backport: compatible empty/loading/error states, older-system button and corner treatments, haptics, and appearance callbacks. All search filter commands remain available in one menu.
+- On iOS 15–18, transfers use the existing bounded background grace period and pause/checkpoint when it expires; eligible downloads resume when the app returns to the foreground. Settings explain that the app must stay open for sustained downloading. iOS 26 continued-processing behavior is retained.
+- Added a manual unsigned ARM64 IPA build for TrollStore, strict API availability checks, and a bundle verifier that rejects native binaries requiring newer than iOS 15. Pointed this fork's About source link to its modified source.
+- Updated MessagePack and its analyzer to 3.1.9 to include the nested-array denial-of-service fix.
+
 - Fixed the chatroom, room-user, and private-message action sheets rendering as a clipped bubble squeezed against the bottom of the screen: iOS 26 honors a popover anchor on a compact iPhone, so those widths now take the system's own full-width sheet and only regular widths anchor, through one shared helper.
 - Reworked both conversation composers — chatrooms and private messages — into one growing multi-line field: Return inserts a line break, the send control is the only way to send, the field grows from one line to five (never past a third of the screen) before it scrolls, and it keeps a fixed corner radius, wider text insets, and a gap above the keyboard instead of the capsule whose round ends overran the text.
 - Gave the private-message composer the chatroom's treatment: a field floating over the transcript instead of a filled bar, a circular filled send control, and a floating jump-to-latest control instead of a full composer row.

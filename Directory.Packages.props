@@ -10,8 +10,8 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(ManagePackageVersionsCentrally)' == 'true'">
-    <PackageVersion Include="MessagePack" Version="3.1.8" />
-    <PackageVersion Include="MessagePackAnalyzer" Version="3.1.8" />
+    <PackageVersion Include="MessagePack" Version="3.1.9" />
+    <PackageVersion Include="MessagePackAnalyzer" Version="3.1.9" />
     <PackageVersion Include="System.Text.Json" Version="10.0.10" />
 
     <PackageVersion Include="Xamarin.AndroidX.Compose.Runtime.Annotation.Jvm" Version="1.10.0.1" />

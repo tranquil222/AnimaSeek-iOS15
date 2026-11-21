@@ -33,8 +33,7 @@ internal static class UIKitFactory
     public static void ApplyRoundedContentCorners(UIView view)
     {
         ArgumentNullException.ThrowIfNull(view);
-        view.CornerConfiguration = UICornerConfiguration.CreateUniformCorners(
-            UICornerRadius.CreateFixed(RoundedContentCornerRadius));
+        ApplyFixedCorners(view, RoundedContentCornerRadius);
     }
 
     /// <summary>Applies a capsule corner treatment that follows the view's measured height at every Dynamic Type size.</summary>
@@ -42,7 +41,15 @@ internal static class UIKitFactory
     public static void ApplyCapsuleCorners(UIView view)
     {
         ArgumentNullException.ThrowIfNull(view);
-        view.CornerConfiguration = UICornerConfiguration.CreateCapsule();
+        if (OperatingSystem.IsIOSVersionAtLeast(26))
+        {
+            view.CornerConfiguration = UICornerConfiguration.CreateCapsule();
+        }
+        else
+        {
+            ObserveLegacyAppearance(view, target =>
+                target.Layer.CornerRadius = target.Bounds.Height / 2);
+        }
     }
 
     /// <summary>The shared size of the circular conversation controls, which is also the touch-target minimum.</summary>
@@ -97,8 +104,16 @@ internal static class UIKitFactory
         ArgumentNullException.ThrowIfNull(view);
         view.Layer.BorderWidth = (nfloat)0.5;
         view.Layer.BorderColor = UIColor.Separator.GetResolvedColor(view.TraitCollection).CGColor;
-        view.RegisterForTraitChanges<UITraitUserInterfaceStyle>((_, _) =>
-            view.Layer.BorderColor = UIColor.Separator.GetResolvedColor(view.TraitCollection).CGColor);
+        if (OperatingSystem.IsIOSVersionAtLeast(17))
+        {
+            view.RegisterForTraitChanges<UITraitUserInterfaceStyle>((_, _) =>
+                view.Layer.BorderColor = UIColor.Separator.GetResolvedColor(view.TraitCollection).CGColor);
+        }
+        else
+        {
+            ObserveLegacyAppearance(view, target =>
+                target.Layer.BorderColor = UIColor.Separator.GetResolvedColor(target.TraitCollection).CGColor);
+        }
     }
 
     /// <summary>Anchors an action sheet only where a popover is the platform's own presentation.</summary>
@@ -137,8 +152,61 @@ internal static class UIKitFactory
     public static void ApplyGrowingFieldCorners(UIView view)
     {
         ArgumentNullException.ThrowIfNull(view);
-        view.CornerConfiguration = UICornerConfiguration.CreateUniformCorners(
-            UICornerRadius.CreateFixed(GrowingFieldCornerRadius));
+        ApplyFixedCorners(view, GrowingFieldCornerRadius);
+    }
+
+    private static void ApplyFixedCorners(UIView view, nfloat radius)
+    {
+        if (OperatingSystem.IsIOSVersionAtLeast(26))
+        {
+            view.CornerConfiguration = UICornerConfiguration.CreateUniformCorners(UICornerRadius.CreateFixed(radius));
+        }
+        else
+        {
+            view.Layer.CornerRadius = radius;
+            view.Layer.CornerCurve = CoreAnimation.CACornerCurve.Continuous;
+        }
+    }
+
+    private static void ObserveLegacyAppearance(UIView view, Action<UIView> update)
+    {
+        update(view);
+        view.InsertSubview(new LegacyAppearanceObserver(view, update), 0);
+    }
+
+    // iOS 15/16 use the original trait-change callback. An inert child observes
+    // layout and appearance changes without keeping its parent alive.
+    private sealed class LegacyAppearanceObserver : UIView
+    {
+        private readonly WeakReference<UIView> target;
+        private readonly Action<UIView> update;
+
+        public LegacyAppearanceObserver(UIView target, Action<UIView> update) : base(target.Bounds)
+        {
+            this.target = new(target);
+            this.update = update;
+            AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
+            UserInteractionEnabled = false;
+            AccessibilityElementsHidden = true;
+            BackgroundColor = UIColor.Clear;
+        }
+
+        public override void LayoutSubviews()
+        {
+            base.LayoutSubviews();
+            Refresh();
+        }
+
+        public override void TraitCollectionDidChange(UITraitCollection? previousTraitCollection)
+        {
+            base.TraitCollectionDidChange(previousTraitCollection);
+            Refresh();
+        }
+
+        private void Refresh()
+        {
+            if (target.TryGetTarget(out UIView? view)) update(view);
+        }
     }
 
     /// <summary>Creates a self-sizing label that follows Dynamic Type and semantic colors.</summary>

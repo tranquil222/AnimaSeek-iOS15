@@ -10,10 +10,6 @@ using UIKit;
 
 namespace AnimaSeek.iOS;
 
-// The project is iOS 26-only. The binding annotates continued-processing members as unavailable to Mac Catalyst,
-// and CA1416 otherwise treats this iOS-only call site as though it were also reachable from that unsupported platform.
-#pragma warning disable CA1416
-
 /// <summary>
 /// Maps foreground-initiated Soulseek transfers onto iOS 26 continued-processing tasks and checkpoints interruptions.
 /// </summary>
@@ -44,7 +40,9 @@ internal sealed class IosBackgroundTaskCoordinator : IDisposable
     private readonly HashSet<TransferKey> continuedTransferBatch = [];
     private readonly HashSet<TransferFileIdentity> continuedTransferFiles = [];
     private readonly Dictionary<TransferFileIdentity, DurableDownloadTerminalOutcome> durableDownloadTerminals = [];
-    private BGContinuedProcessingTask? activeTask;
+    // Keep the stored type available on every supported OS. Only the guarded
+    // iOS 26 methods below inspect continued-processing-specific members.
+    private BGTask? activeTask;
     private Func<CancellationToken, Task<bool>>? wishlistRefreshOperation;
     private Func<TimeSpan?>? wishlistRefreshInterval;
     private string? scheduledIdentifier;
@@ -435,10 +433,16 @@ internal sealed class IosBackgroundTaskCoordinator : IDisposable
     /// <summary>Accepts the concrete continued-processing task launched for a previously submitted transfer batch.</summary>
     /// <param name="identifier">The concrete identifier registered with iOS for this batch.</param>
     /// <param name="task">The system-owned task and progress object.</param>
-    internal void HandleTransferTask(string identifier, BGContinuedProcessingTask task)
+    internal void HandleTransferTask(string identifier, BGTask task)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(identifier);
         ArgumentNullException.ThrowIfNull(task);
+
+        if (!OperatingSystem.IsIOSVersionAtLeast(26) || task is not BGContinuedProcessingTask continuedTask)
+        {
+            task.SetTaskCompleted(false);
+            return;
+        }
 
         lock (sync)
         {
@@ -452,9 +456,9 @@ internal sealed class IosBackgroundTaskCoordinator : IDisposable
             acceptedTransferRequest = true;
             transferSubmissionInFlight = false;
             task.ExpirationHandler = () => ExpireTransferTask(identifier);
-            task.Progress.Cancellable = true;
-            task.Progress.Pausable = false;
-            task.Progress.SetCancellationHandler(() => CancelTransferTask(identifier));
+            continuedTask.Progress.Cancellable = true;
+            continuedTask.Progress.Pausable = false;
+            continuedTask.Progress.SetCancellationHandler(() => CancelTransferTask(identifier));
         }
 
         ReconcileTransfers(allowSubmission: false);
@@ -669,11 +673,15 @@ internal sealed class IosBackgroundTaskCoordinator : IDisposable
     {
         IReadOnlyList<Transfer> transfers = session.GetTransferReconciliationSnapshot();
         Transfer[] activeTransfers = GetActiveTransfers(transfers);
+        if (!OperatingSystem.IsIOSVersionAtLeast(26) && activeTransfers.Length > 0)
+        {
+            ReportContinuationUnavailable(ContinuedTransferAvailability.Unavailable);
+        }
         Transfer[] monitoredTransfers;
         Transfer[] progressTransfers;
         string? identifierToSubmit = null;
         bool identifierPoolExhausted = false;
-        BGContinuedProcessingTask? taskToUpdate;
+        BGTask? taskToUpdate;
         bool shouldFinish;
         bool completionSucceeded;
 
@@ -757,6 +765,7 @@ internal sealed class IosBackgroundTaskCoordinator : IDisposable
 
             bool hasExplicitUserTransfer = explicitlyStarted.Length > 0;
             if (allowSubmission &&
+                OperatingSystem.IsIOSVersionAtLeast(26) &&
                 foreground &&
                 hasExplicitUserTransfer &&
                 recentlyProgressing &&
@@ -821,6 +830,17 @@ internal sealed class IosBackgroundTaskCoordinator : IDisposable
 
     private void SubmitTransferTask(string identifier, IReadOnlyList<Transfer> activeTransfers)
     {
+        if (!OperatingSystem.IsIOSVersionAtLeast(26))
+        {
+            bool shouldPause = ClearFailedSubmission(identifier);
+            ReportContinuationUnavailable(ContinuedTransferAvailability.Unavailable);
+            if (shouldPause)
+            {
+                PauseAllForSystemInterruption();
+            }
+            return;
+        }
+
         var request = new BGContinuedProcessingTaskRequest(
             identifier,
             BuildTitle(activeTransfers),
@@ -892,9 +912,11 @@ internal sealed class IosBackgroundTaskCoordinator : IDisposable
 
         if (announce)
         {
-            toaster.ShowToastLong(StringResources.Get(RunningInSimulator
-                ? "IosBackgroundContinuationSimulator"
-                : "IosBackgroundContinuationDeclined"));
+            toaster.ShowToastLong(StringResources.Get(!OperatingSystem.IsIOSVersionAtLeast(26)
+                ? "IosBackgroundContinuationLegacy"
+                : RunningInSimulator
+                    ? "IosBackgroundContinuationSimulator"
+                    : "IosBackgroundContinuationDeclined"));
         }
     }
 
@@ -930,8 +952,13 @@ internal sealed class IosBackgroundTaskCoordinator : IDisposable
         return pauseAfterBackgroundRace;
     }
 
-    private void UpdateSystemProgress(BGContinuedProcessingTask task, IReadOnlyList<Transfer> transfers)
+    private void UpdateSystemProgress(BGTask backgroundTask, IReadOnlyList<Transfer> transfers)
     {
+        if (!OperatingSystem.IsIOSVersionAtLeast(26) || backgroundTask is not BGContinuedProcessingTask task)
+        {
+            return;
+        }
+
         (long completed, long total) = GetAggregateProgress(transfers);
         task.Progress.TotalUnitCount = total;
         task.Progress.CompletedUnitCount = completed;
@@ -1152,7 +1179,7 @@ internal sealed class IosBackgroundTaskCoordinator : IDisposable
 
     private TransferTaskClaim? ClaimTransferTask(string? expectedIdentifier)
     {
-        BGContinuedProcessingTask? task;
+        BGTask? task;
         string? identifier;
 
         lock (sync)
@@ -1240,7 +1267,7 @@ internal sealed class IosBackgroundTaskCoordinator : IDisposable
 
     private readonly record struct TransferKey(TransferDirection Direction, int Token);
 
-    private sealed record TransferTaskClaim(BGContinuedProcessingTask? Task, string? Identifier);
+    private sealed record TransferTaskClaim(BGTask? Task, string? Identifier);
 
     private static TransferFileIdentity ToFileIdentity(Transfer transfer) =>
         new(transfer.Direction, transfer.Username, transfer.Filename);

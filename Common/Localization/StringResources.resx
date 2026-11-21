@@ -2705,6 +2705,9 @@ Any information about the steps / conditions leading up to the issue is much app
   <data name="IosBackgroundTransferProgressSingle" xml:space="preserve"><value>{0:0}% · {1} active transfer</value></data>
   <data name="IosBackgroundTransferProgressPlural" xml:space="preserve"><value>{0:0}% · {1} active transfers</value></data>
   <data name="IosBackgroundContinuationDeclined" xml:space="preserve"><value>iOS declined background transfers. Downloads pause when you leave AnimaSeek and resume when you return.</value></data>
+  <data name="IosBackgroundContinuationLegacy" xml:space="preserve"><value>Keep AnimaSeek open while downloading. On this iOS version, transfers pause after a short time in the background and eligible downloads resume when you return.</value></data>
+  <data name="IosUiBackgroundTransfersLegacyValue" xml:space="preserve"><value>Keep app open</value></data>
+  <data name="IosUiBackgroundTransfersLegacyDetail" xml:space="preserve"><value>Keep AnimaSeek open while downloading. Switching apps or locking the screen pauses transfers after a short grace period. Reopen AnimaSeek to reconnect and resume eligible downloads. Uploads may wait for the peer to request them again.</value></data>
   <data name="IosBackgroundContinuationSimulator" xml:space="preserve"><value>The iOS Simulator does not allow background transfers. Downloads pause when you leave AnimaSeek; test background transfers on a device.</value></data>
   <data name="IosUiBackgroundTransfers" xml:space="preserve"><value>Background Transfers</value></data>
   <data name="IosUiBackgroundTransfersUnknown" xml:space="preserve"><value>Not requested yet</value></data>

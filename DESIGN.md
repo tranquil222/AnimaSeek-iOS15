@@ -400,6 +400,13 @@ A UI change is acceptable when: the affected behaviors and states are named; new
 
 Honest ledger of what the shipped app does *not* yet satisfy. These are defects or open work — recorded so they are never mistaken for the system.
 
+**iOS 15 backport (2026-11-21)**
+
+- The upstream visual specification describes iOS 26. On older systems, native tinted/filled buttons and continuous CALayer corners replace glass and newer corner configurations. Composer borders continue to follow light/dark appearance through legacy trait callbacks.
+- On iOS 15/16, `ContentStateView` uses semantic colors, Dynamic Type labels, a spinner or symbol, and the same optional recovery action in a centered stack. List backgrounds restore their previous view when cleared; other screens place the state inside the safe area. Search keeps its native navigation-bar search placement on iOS 15 and presents all filter commands in one menu.
+- Before iOS 26, continued-processing tasks are unavailable. Transfers use the existing short background grace period, checkpoint/pause, and foreground resume. Settings and the once-per-run notice explicitly tell the user to keep the app open for sustained transfers.
+- Verification owed: physical iPhone 7 launch, sign-in, search, download, background expiration/resume, and the older-system UI in light/dark and accessibility text sizes. Compile-time availability analysis and portable tests do not establish these runtime behaviors.
+
 **Visual system**
 
 - The outgoing-bubble metadata color (white at 84 % on `SystemBlue`) has no verified contrast ratio. (The former non-adaptive white backdrop behind the About logo is resolved: the Phoenix brand tile is opaque full-bleed and the hard-coded background is removed.)

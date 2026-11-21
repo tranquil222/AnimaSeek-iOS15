@@ -1,0 +1,82 @@
+name: Build iOS 15 backport
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios15-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    # Standard hosted runners are free for this public source fork.
+    if: github.event.repository.private == false
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+      LANG: en_US.UTF-8
+      LC_ALL: en_US.UTF-8
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.302
+      - name: Portable regression tests (no live Soulseek account)
+        run: dotnet test UnitTestCommon/UnitTestCommon.csproj --configuration Release --filter 'TestCategory!=RealData'
+      - name: Protocol AOT regression tests
+        run: dotnet test Seeker/Soulseek.NET-master/tests/Soulseek.Tests.Aot/Soulseek.Tests.Aot.csproj --configuration Release
+
+  build:
+    needs: tests
+    runs-on: macos-26
+    timeout-minutes: 45
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.302
+      - name: Select upstream Xcode toolchain
+        run: |
+          sudo xcode-select --switch /Applications/Xcode_26.6.app/Contents/Developer
+          xcodebuild -version
+          dotnet --version
+      - name: Install iOS workload
+        run: dotnet workload install ios
+      - name: Build mock simulator app with API availability checks
+        run: >-
+          dotnet build Seeker.iOS/Seeker.iOS.csproj
+          --configuration "Debug Mock" --framework net10.0-ios --runtime iossimulator-arm64
+          -p:UseInterpreter=false -p:MtouchLink=Full -p:TrimmerSingleWarn=false
+          -p:ILLinkTreatWarningsAsErrors=true -p:ArchiveOnBuild=false
+      - name: Build real ARM64 app for TrollStore
+        run: >-
+          dotnet build Seeker.iOS/Seeker.iOS.csproj
+          --configuration Release --framework net10.0-ios --runtime ios-arm64
+          -p:UseInterpreter=false -p:MtouchLink=Full -p:TrimmerSingleWarn=false
+          -p:ILLinkTreatWarningsAsErrors=true -p:EnableCodeSigning=false
+          -p:ApplicationDisplayVersion=1.2.0 -p:ApplicationVersion=${{ github.run_number }}
+      - name: Package IPA and check deployment targets
+        shell: bash
+        run: |
+          set -euo pipefail
+          app_bundle="Seeker.iOS/bin/Release/net10.0-ios/ios-arm64/AnimaSeek.app"
+          test -d "$app_bundle"
+          python3 scripts/verify-ios15-bundle.py "$app_bundle"
+          staging="${RUNNER_TEMP}/animaseek-ios15-package"
+          mkdir -p "$staging/Payload" dist
+          cp -R "$app_bundle" "$staging/Payload/"
+          (cd "$staging" && zip -qry "$GITHUB_WORKSPACE/dist/AnimaSeek-iOS15.ipa" Payload)
+          shasum -a 256 dist/AnimaSeek-iOS15.ipa > dist/SHA256SUMS.txt
+          git rev-parse HEAD > dist/SOURCE_COMMIT.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: AnimaSeek-iOS15-TrollStore
+          path: dist/
+          if-no-files-found: error
+          retention-days: 3

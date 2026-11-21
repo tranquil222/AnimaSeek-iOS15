@@ -67,6 +67,14 @@ internal static class BackgroundTaskRegistrar
                 task.SetTaskCompleted(false);
             });
 
+        // Continued processing was added in iOS 26. Older systems still register
+        // opportunistic wishlist refresh, but use the coordinator's checkpoint /
+        // foreground-resume path for transfers instead of registering unsupported tasks.
+        if (!OperatingSystem.IsIOSVersionAtLeast(26))
+        {
+            return;
+        }
+
         foreach (string identifier in TransferIdentifierPool)
         {
             // Registering the manifest wildcard itself is refused; every concrete pooled identifier it permits

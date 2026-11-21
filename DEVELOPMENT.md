@@ -12,7 +12,7 @@ The known-good local toolchain is:
 - the .NET `ios` workload; and
 - Rider 2026.2 or another editor, if desired.
 
-The app has an iOS 26.0 deployment floor and is iPhone-only. Install the full Xcode application, not only the Command Line Tools, then finish Xcode's first-launch setup:
+This fork has an iOS 15.0 deployment floor and is iPhone-only. The build toolchain remains the upstream toolchain above; see [IOS15.md](IOS15.md) for the manual TrollStore build and older-device validation. Install the full Xcode application, not only the Command Line Tools, then finish Xcode's first-launch setup:
 
 ```sh
 sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer

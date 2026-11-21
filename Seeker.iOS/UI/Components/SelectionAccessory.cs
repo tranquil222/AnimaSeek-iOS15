@@ -130,7 +130,10 @@ internal sealed class SelectionBar : UIToolbar
                 // material that capsule sits slightly proud of the button's own and reads as a halo around it,
                 // and behind the status label it reads as a disc around text that is not pressable. Items with
                 // no view of their own still need it: there the bar's glass is the only material they have.
-                item.HidesSharedBackground = item.CustomView is not null;
+                if (OperatingSystem.IsIOSVersionAtLeast(26))
+                {
+                    item.HidesSharedBackground = item.CustomView is not null;
+                }
             }
 
             Items = presented;
@@ -252,11 +255,14 @@ internal sealed class SelectionBar : UIToolbar
     {
         bool emphasized = item.Style == UIBarButtonItemStyle.Done;
 
-        // Glass, not a painted capsule: these buttons sit over content beside the tab bar, and a solid fill reads
-        // as a white slab against a light list. The emphasized action keeps the prominent variant.
-        UIButtonConfiguration configuration = emphasized
-            ? UIButtonConfiguration.ProminentGlassButtonConfiguration
-            : UIButtonConfiguration.GlassButtonConfiguration;
+        // Preserve the emphasized action on both classic and glass-capable iOS.
+        UIButtonConfiguration configuration = OperatingSystem.IsIOSVersionAtLeast(26)
+            ? emphasized
+                ? UIButtonConfiguration.ProminentGlassButtonConfiguration
+                : UIButtonConfiguration.GlassButtonConfiguration
+            : emphasized
+                ? UIButtonConfiguration.FilledButtonConfiguration
+                : UIButtonConfiguration.GrayButtonConfiguration;
         configuration.Title = item.Title;
         configuration.CornerStyle = UIButtonConfigurationCornerStyle.Capsule;
         configuration.TitleLineBreakMode = UILineBreakMode.TailTruncation;

@@ -194,7 +194,10 @@ internal sealed class SearchViewController : UIViewController, IAppRouteReceivin
         // explicit navigation-bar action instead.
         NavigationItem.SearchController = searchController;
         NavigationItem.HidesSearchBarWhenScrolling = false;
-        NavigationItem.PreferredSearchBarPlacement = UINavigationItemSearchBarPlacement.Stacked;
+        if (OperatingSystem.IsIOSVersionAtLeast(16))
+        {
+            NavigationItem.PreferredSearchBarPlacement = UINavigationItemSearchBarPlacement.Stacked;
+        }
         DefinesPresentationContext = true;
     }
 
@@ -507,10 +510,7 @@ internal sealed class SearchViewController : UIViewController, IAppRouteReceivin
 
         return UIMenu.Create(
             AppStrings.Get("IosUiSearchFilters"),
-            [
-                UIMenu.Create(string.Empty, null, null, UIMenuOptions.DisplayInline, quick),
-                UIMenu.Create(string.Empty, null, null, UIMenuOptions.DisplayInline, [.. editing]),
-            ]);
+            [.. quick, .. editing]);
     }
 
     /// <summary>Builds one menu choice whose selection is carried by the system checkmark, not by color.</summary>
