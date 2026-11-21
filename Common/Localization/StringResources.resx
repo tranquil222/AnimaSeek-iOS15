@@ -14,7 +14,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="app_name" xml:space="preserve">
-    <value>AnimaSeek</value>
+    <value>AnimaSeek 15</value>
   </data>
   <data name="com.google.firebase.crashlytics.mapping_file_id" xml:space="preserve">
     <value>1.0</value>
@@ -2721,7 +2721,7 @@ Any information about the steps / conditions leading up to the issue is much app
   <data name="IosUiFeatureUnavailableDetail" xml:space="preserve"><value>This destination is not available in the current application state.</value></data>
   <data name="IosUiUnreadItems" xml:space="preserve"><value>{0} unread items</value></data>
   <data name="IosUiAppLogoAccessibilityLabel" xml:space="preserve"><value>AnimaSeek logo</value></data>
-  <data name="IosUiAboutBody" xml:space="preserve"><value>AnimaSeek is a free, open-source, native iPhone client for the Soulseek network. It has no ads or paid features.</value></data>
+  <data name="IosUiAboutBody" xml:space="preserve"><value>AnimaSeek 15 is an unofficial iOS 15 backport of AnimaSeek. It is free, open source, and has no ads or paid features. This modified version is not maintained by or affiliated with the upstream AnimaSeek developers.</value></data>
   <data name="IosUiVersionFormat" xml:space="preserve"><value>Version {0} ({1})</value></data>
   <data name="IosUiNoticesAndLicenses" xml:space="preserve"><value>Notices and Licenses</value></data>
   <data name="IosUiLegalFooter" xml:space="preserve"><value>These notices accompany the exact components bundled with this version of AnimaSeek.</value></data>

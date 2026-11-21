@@ -10,10 +10,10 @@
     <SupportedOSPlatformVersion>15.0</SupportedOSPlatformVersion>
     <WarningsAsErrors>$(WarningsAsErrors);CA1416</WarningsAsErrors>
     <Configurations>Debug;Debug Mock;Release;Release Mock</Configurations>
-    <ApplicationTitle>AnimaSeek</ApplicationTitle>
+    <ApplicationTitle>AnimaSeek 15</ApplicationTitle>
     <ApplicationId>com.animaseek.app</ApplicationId>
-    <ApplicationDisplayVersion>3.7.4</ApplicationDisplayVersion>
-    <ApplicationVersion>136</ApplicationVersion>
+    <ApplicationDisplayVersion>3.7.5</ApplicationDisplayVersion>
+    <ApplicationVersion>137</ApplicationVersion>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
   </PropertyGroup>
 

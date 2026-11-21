@@ -1,3 +1,5 @@
+// Copyright (c) 2026 AnimaSeek iOS 15 contributors.
+// Modified 2026-11-21: unofficial iOS 15 compatibility, presentation, or fork identity updates.
 using Foundation;
 using CoreGraphics;
 using CoreText;
@@ -8,6 +10,19 @@ namespace AnimaSeek.iOS.UI.Components;
 /// <summary>Creates small, consistently accessible UIKit primitives without replacing native component behavior.</summary>
 internal static class UIKitFactory
 {
+    /// <summary>Keeps navigation labels readable over scrolling content in every bar state.</summary>
+    public static void ApplyOpaqueNavigationBar(UINavigationBar bar)
+    {
+        var appearance = new UINavigationBarAppearance();
+        appearance.ConfigureWithOpaqueBackground();
+        appearance.BackgroundColor = UIColor.SystemBackground;
+        bar.StandardAppearance = appearance;
+        bar.CompactAppearance = appearance;
+        bar.ScrollEdgeAppearance = appearance;
+        bar.CompactScrollEdgeAppearance = appearance;
+        bar.Translucent = false;
+    }
+
     /// <summary>Gets a Dynamic Type font while adapting the nullable platform binding to a non-null UI contract.</summary>
     /// <param name="style">The preferred system text style.</param>
     /// <returns>The preferred font, or a readable system fallback.</returns>

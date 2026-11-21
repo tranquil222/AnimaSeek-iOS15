@@ -1,3 +1,5 @@
+// Copyright (c) 2026 AnimaSeek iOS 15 contributors.
+// Modified 2026-11-21: unofficial iOS 15 compatibility, presentation, or fork identity updates.
 using BackgroundTasks;
 
 namespace AnimaSeek.iOS;

@@ -1,3 +1,5 @@
+// Copyright (c) 2026 AnimaSeek iOS 15 contributors.
+// Modified 2026-11-21: unofficial iOS 15 compatibility, presentation, or fork identity updates.
 using AnimaSeek.iOS.UI.Accessibility;
 using AnimaSeek.iOS.UI.Components;
 using UIKit;
@@ -19,6 +21,13 @@ internal sealed class RootTabBarController : UITabBarController
         ArgumentNullException.ThrowIfNull(router);
         selectionDelegate = new TabSelectionDelegate(this);
         Delegate = selectionDelegate;
+
+        var tabAppearance = new UITabBarAppearance();
+        tabAppearance.ConfigureWithOpaqueBackground();
+        tabAppearance.BackgroundColor = UIColor.SystemBackground;
+        TabBar.StandardAppearance = tabAppearance;
+        TabBar.ScrollEdgeAppearance = tabAppearance;
+        TabBar.Translucent = false;
 
         UIViewController[] controllers = Enum.GetValues<AppTab>()
             .Select(tab => CreateNavigationController(tab, screenFactory.CreateRoot(tab, router)))
@@ -81,6 +90,7 @@ internal sealed class RootTabBarController : UITabBarController
             RestorationIdentifier = $"app.navigation.{tab.ToString().ToLowerInvariant()}",
         };
         navigation.NavigationBar.PrefersLargeTitles = true;
+        UIKitFactory.ApplyOpaqueNavigationBar(navigation.NavigationBar);
         navigation.TabBarItem = new UITabBarItem(
             title,
             UIImage.GetSystemImage(tab.SymbolName()),

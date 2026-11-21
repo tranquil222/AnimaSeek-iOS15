@@ -60,23 +60,44 @@ jobs:
           --configuration Release --framework net10.0-ios --runtime ios-arm64
           -p:UseInterpreter=false -p:MtouchLink=Full -p:TrimmerSingleWarn=false
           -p:ILLinkTreatWarningsAsErrors=true -p:EnableCodeSigning=false
-          -p:ApplicationDisplayVersion=1.2.0 -p:ApplicationVersion=${{ github.run_number }}
+      - name: Capture mock menu and bar previews
+        run: python3 scripts/capture-menu-previews.py Seeker.iOS/bin/Debug\ Mock/net10.0-ios/iossimulator-arm64
+      - name: Upload previews for visual inspection
+        uses: actions/upload-artifact@v4
+        with:
+          name: AnimaSeek-iOS15-previews
+          path: dist/previews/
+          if-no-files-found: error
+          retention-days: 7
       - name: Package IPA and check deployment targets
         shell: bash
         run: |
           set -euo pipefail
-          app_bundle="Seeker.iOS/bin/Release/net10.0-ios/ios-arm64/AnimaSeek.app"
+          app_bundle="$(find Seeker.iOS/bin/Release/net10.0-ios/ios-arm64 -maxdepth 1 -type d -name '*.app' -print -quit)"
           test -d "$app_bundle"
           python3 scripts/verify-ios15-bundle.py "$app_bundle"
           staging="${RUNNER_TEMP}/animaseek-ios15-package"
           mkdir -p "$staging/Payload" dist
           cp -R "$app_bundle" "$staging/Payload/"
+          cp Seeker/Soulseek.NET-master/LICENSE "$staging/LICENSE"
+          cp NOTICE "$staging/NOTICE"
           (cd "$staging" && zip -qry "$GITHUB_WORKSPACE/dist/AnimaSeek-iOS15.ipa" Payload)
-          shasum -a 256 dist/AnimaSeek-iOS15.ipa > dist/SHA256SUMS.txt
+          (cd "$staging" && zip -q "$GITHUB_WORKSPACE/dist/AnimaSeek-iOS15.ipa" LICENSE NOTICE)
+          git archive --format=tar.gz --prefix=AnimaSeek-iOS15/ -o dist/AnimaSeek-iOS15-source.tar.gz HEAD
+          cp LICENSE dist/APP-LICENSE.txt
+          cp Seeker/Soulseek.NET-master/LICENSE dist/LICENSE
+          cp NOTICE THIRD-PARTY-NOTICES dist/
+          shasum -a 256 dist/AnimaSeek-iOS15.ipa dist/AnimaSeek-iOS15-source.tar.gz > dist/SHA256SUMS.txt
           git rev-parse HEAD > dist/SOURCE_COMMIT.txt
       - uses: actions/upload-artifact@v4
         with:
           name: AnimaSeek-iOS15-TrollStore
-          path: dist/
+          path: |
+            dist/*.ipa
+            dist/*.tar.gz
+            dist/*.txt
+            dist/LICENSE
+            dist/NOTICE
+            dist/THIRD-PARTY-NOTICES
           if-no-files-found: error
           retention-days: 3

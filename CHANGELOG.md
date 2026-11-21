@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- Reused per-cell progress indicators and disabled animated transfer-list snapshots to prevent progress bars from being repeatedly removed/recreated during updates. Transfer operations themselves are unchanged.
+- Replaced the search file/folder and browse file/folder-download action sheets with opaque, scrollable menus. Long filenames and action labels wrap with Dynamic Type, Cancel remains in the navigation bar, and actions execute after dismissal.
+- Made the tab and navigation bars opaque in both standard and scroll-edge appearances so list content cannot show through their labels.
+- Prepared the unofficial AnimaSeek 15 community preview (display version 3.7.5, build 137), with corresponding source and preserved licenses/notices in release downloads. The backport uses its own protocol minor identifier, 20261501.
+- Added mock-only small-screen light/dark/large-text menu previews and a search-bar screenshot to the build workflow. Initial iPhone 7 download and playback were user-confirmed; the updated menus still require physical-device confirmation.
+
 - Added an unofficial iOS 15 backport: compatible empty/loading/error states, older-system button and corner treatments, haptics, and appearance callbacks. All search filter commands remain available in one menu.
 - On iOS 15–18, transfers use the existing bounded background grace period and pause/checkpoint when it expires; eligible downloads resume when the app returns to the foreground. Settings explain that the app must stay open for sustained downloading. iOS 26 continued-processing behavior is retained.
 - Added a manual unsigned ARM64 IPA build for TrollStore, strict API availability checks, and a bundle verifier that rejects native binaries requiring newer than iOS 15. Pointed this fork's About source link to its modified source.

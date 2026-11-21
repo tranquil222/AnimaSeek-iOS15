@@ -4,7 +4,7 @@ AnimaSeek incorporates the following third-party software. The notices below
 are reproduced from the corresponding upstream distributions.
 
 ==============================================================================
-MessagePack for C# and MessagePack.Annotations 3.1.8
+MessagePack for C# and MessagePack.Annotations 3.1.9
 https://github.com/MessagePack-CSharp/MessagePack-CSharp
 ==============================================================================
 

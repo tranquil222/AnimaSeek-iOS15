@@ -1,6 +1,8 @@
+// Copyright (c) 2026 AnimaSeek iOS 15 contributors.
+// Modified 2026-11-21: unofficial iOS 15 compatibility, presentation, or fork identity updates.
 namespace Seeker;
 
-/// <summary>Defines the Soulseek protocol identity assigned to AnimaSeek.</summary>
+/// <summary>Defines the distinct Soulseek protocol identity of the unofficial AnimaSeek 15 backport.</summary>
 public static class SoulseekClientIdentity
 {
     /// <summary>
@@ -15,11 +17,11 @@ public static class SoulseekClientIdentity
         "the Soulseek.NET project or its author(s).";
 
     /// <summary>
-    /// Gets the AnimaSeek-specific minor version sent during Soulseek login.
+    /// Gets the AnimaSeek 15-specific minor version sent during Soulseek login.
     /// </summary>
     /// <remarks>
     /// This value identifies the client implementation and is intentionally independent of the
     /// application version shown to users. Keep it synchronized across every shipping platform.
     /// </remarks>
-    public const int MinorVersion = 793;
+    public const int MinorVersion = 20261501;
 }

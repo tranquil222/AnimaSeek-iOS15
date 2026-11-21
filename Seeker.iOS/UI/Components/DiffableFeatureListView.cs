@@ -1,4 +1,7 @@
+// Copyright (c) 2026 AnimaSeek iOS 15 contributors.
+// Modified 2026-11-21: reuse transfer progress accessories across list refreshes.
 using System.Collections.Immutable;
+using System.Runtime.CompilerServices;
 using AnimaSeek.iOS.UI.Accessibility;
 using CoreGraphics;
 using Foundation;
@@ -42,6 +45,7 @@ internal sealed class DiffableFeatureListView : UIView
     private IReadOnlyDictionary<string, FeatureListItem> items = new Dictionary<string, FeatureListItem>();
     private readonly HashSet<string> selectedItemIds = new(StringComparer.Ordinal);
     private readonly HashSet<string> validSelectionIds = new(StringComparer.Ordinal);
+    private readonly ConditionalWeakTable<UICollectionViewListCell, CellAccessoryState> accessoryStates = new();
     private bool selectionMode;
 
     /// <summary>Creates a plain or inset-grouped native list.</summary>
@@ -219,35 +223,8 @@ internal sealed class DiffableFeatureListView : UIView
             : UIImage.GetSystemImage(item.SymbolName);
         cell.ContentConfiguration = content;
         cell.IndentationLevel = item.Indentation;
-        var accessories = new List<UICellAccessory>();
-        if (item.Progress is { } progress)
-        {
-            // UICellAccessoryCustomView asserts that the custom view still translates its autoresizing
-            // mask, so the accessory's width comes from the frame rather than a self-imposed constraint.
-            var progressView = new UIProgressView(UIProgressViewStyle.Default)
-            {
-                Progress = (float)Math.Clamp(progress, 0, 1),
-                IsAccessibilityElement = false,
-            };
-            // A progress view has no intrinsic width, so the accessory takes its size from this frame.
-            progressView.Frame = new CGRect(0, 0, ProgressAccessoryWidth, ProgressAccessoryHeight);
-            accessories.Add(new UICellAccessoryCustomView(progressView, UICellAccessoryPlacement.Trailing)
-            {
-                MaintainsFixedSize = true,
-                ReservedLayoutWidth = ProgressAccessoryWidth,
-            });
-        }
-
-        if (selectionMode)
-        {
-            accessories.Insert(0, new UICellAccessoryMultiselect());
-        }
-        else if (item.ShowsDisclosure)
-        {
-            accessories.Add(new UICellAccessoryDisclosureIndicator());
-        }
-
-        cell.Accessories = [.. accessories];
+        CellAccessoryState accessoryState = accessoryStates.GetValue(cell, static _ => new());
+        accessoryState.Update(cell, item.Progress, selectionMode, item.ShowsDisclosure);
         cell.IsAccessibilityElement = true;
         cell.AccessibilityIdentifier = $"feature.item.{AccessibilityIdentifiers.Opaque(item.Id)}";
         cell.AccessibilityLabel = item.AccessibilityLabel ?? string.Join(
@@ -262,6 +239,45 @@ internal sealed class DiffableFeatureListView : UIView
                 ? UIAccessibilityTrait.Button
                 : UIAccessibilityTrait.None;
         return cell;
+    }
+
+    // Keep each progress view attached to its reusable cell. Replacing the custom
+    // accessory during every animated snapshot can repeatedly wipe/fade it on iOS 15.
+    private sealed class CellAccessoryState
+    {
+        private UIProgressView? progressView;
+        private UICellAccessoryCustomView? progressAccessory;
+        private (bool Progress, bool Selection, bool Disclosure)? layout;
+
+        public void Update(UICollectionViewListCell cell, double? progress, bool selection, bool disclosure)
+        {
+            if (progress is { } value)
+            {
+                if (progressView is null)
+                {
+                    progressView = new UIProgressView(UIProgressViewStyle.Default)
+                    {
+                        Frame = new CGRect(0, 0, ProgressAccessoryWidth, ProgressAccessoryHeight),
+                        IsAccessibilityElement = false,
+                    };
+                    progressAccessory = new UICellAccessoryCustomView(progressView, UICellAccessoryPlacement.Trailing)
+                    {
+                        MaintainsFixedSize = true,
+                        ReservedLayoutWidth = ProgressAccessoryWidth,
+                    };
+                }
+                UIView.PerformWithoutAnimation(() => progressView.SetProgress((float)Math.Clamp(value, 0, 1), false));
+            }
+
+            var nextLayout = (progress.HasValue, selection, !selection && disclosure);
+            if (layout == nextLayout) return;
+            layout = nextLayout;
+            var accessories = new List<UICellAccessory>();
+            if (selection) accessories.Add(new UICellAccessoryMultiselect());
+            if (progress.HasValue) accessories.Add(progressAccessory!);
+            if (!selection && disclosure) accessories.Add(new UICellAccessoryDisclosureIndicator());
+            cell.Accessories = [.. accessories];
+        }
     }
 
     /// <summary>Updates edit-mode selection by stable identity and refreshes only the affected row.</summary>

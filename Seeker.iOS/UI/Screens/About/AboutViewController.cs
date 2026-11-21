@@ -1,3 +1,5 @@
+// Copyright (c) 2026 AnimaSeek iOS 15 contributors.
+// Modified 2026-11-21: unofficial iOS 15 compatibility, presentation, or fork identity updates.
 using AnimaSeek.iOS.UI.Accessibility;
 using AnimaSeek.iOS.UI.App;
 using AnimaSeek.iOS.UI.Components;
@@ -72,6 +74,11 @@ internal sealed class AboutViewController : UIViewController
         version.TextAlignment = UITextAlignment.Center;
         version.AccessibilityLabel = version.Text;
 
+        var modifiedLibrary = UIKitFactory.Label(UIFontTextStyle.Footnote, UIColor.SecondaryLabel);
+        modifiedLibrary.Text = Seeker.SoulseekClientIdentity.ModifiedLibraryNotice;
+        modifiedLibrary.TextAlignment = UITextAlignment.Center;
+        modifiedLibrary.AccessibilityIdentifier = "about.modified-library-notice";
+
         UIButton source = UIKitFactory.Button(
             AppStrings.Get("about_link_source_title"),
             UIButtonConfiguration.TintedButtonConfiguration,
@@ -85,7 +92,7 @@ internal sealed class AboutViewController : UIViewController
             "doc.text");
         legal.AccessibilityIdentifier = AccessibilityIdentifiers.AboutLegal;
 
-        foreach (UIView view in new UIView[] { logo, title, summary, version, source, legal })
+        foreach (UIView view in new UIView[] { logo, title, summary, version, source, legal, modifiedLibrary })
         {
             content.AddArrangedSubview(view);
         }

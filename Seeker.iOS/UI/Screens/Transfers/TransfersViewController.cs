@@ -1,3 +1,5 @@
+// Copyright (c) 2026 AnimaSeek iOS 15 contributors.
+// Modified 2026-11-21: avoid repeated animated snapshots while transfers update.
 using AnimaSeek.iOS.UI.Accessibility;
 using AnimaSeek.iOS.UI.App;
 using AnimaSeek.iOS.UI.Components;
@@ -154,7 +156,7 @@ internal sealed class TransfersViewController : UIViewController, IAppRouteRecei
         FeatureListItem[] items = state.Grouping == TransferGrouping.ByFolder
             ? state.Folders.Select(FolderItem).ToArray()
             : state.Files.Select(FileItem).ToArray();
-        list.Apply(items);
+        list.Apply(items, animated: false);
         if (Editing)
         {
             UpdateSelectionToolbar();
@@ -528,7 +530,7 @@ internal sealed class TransferFolderViewController : UIViewController
             ShowsDisclosure: true,
             AccessibilityLabel: string.Join(", ", row.Title, row.StatusText, row.Metadata),
             Progress: row.Progress,
-            MonospacedDigits: true)).ToArray());
+            MonospacedDigits: true)).ToArray(), animated: false);
         if (rows.Length == 0)
         {
             ContentStateView.Show(this, new ContentStatePresentation(

@@ -1,3 +1,5 @@
+// Copyright (c) 2026 AnimaSeek iOS 15 contributors.
+// Modified 2026-11-21: unofficial iOS 15 compatibility, presentation, or fork identity updates.
 using NUnit.Framework;
 using Seeker;
 using Soulseek;
@@ -22,7 +24,7 @@ public sealed class SoulseekClientIdentityTests
     {
         using var client = new SoulseekClient(SoulseekClientIdentity.MinorVersion);
 
-        Assert.That(client.MinorVersion, Is.EqualTo(793));
+        Assert.That(client.MinorVersion, Is.EqualTo(20261501));
     }
 
 #if MOCK

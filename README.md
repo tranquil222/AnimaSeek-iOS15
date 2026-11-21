@@ -1,4 +1,12 @@
-> **Unofficial iOS 15 backport:** This fork adapts [AnimaSeek](https://github.com/alexandreteles/AnimaSeek) for older iPhones, including iPhone 7 on iOS 15.8.4. Installation, launch, a download, and playback have been user-confirmed on that device; broader validation remains pending. Build details and known display issues are in [IOS15.md](IOS15.md). The upstream releases and attestations described below apply to upstream builds, not this fork.
+> **AnimaSeek 15 — unofficial iOS 15 backport.** This fork adapts [AnimaSeek](https://github.com/alexandreteles/AnimaSeek) for older ARM64 iPhones. The initial build's installation, launch, a download, and playback were user-confirmed on iPhone 7 / iOS 15.8.4. The readability update adds opaque file/folder menus and solid tab/navigation bars. It is a community preview, with broader device testing still pending.
+
+**[Download the IPA and matching source](https://github.com/tranquil222/AnimaSeek-iOS15/releases)** · **[Installation, testing, and limitations](IOS15.md)**
+
+Install the IPA through TrollStore on an already compatible device. To update this backport, install over the existing app; uninstalling first removes its app data. It shares the original app's bundle identifier, so it replaces another AnimaSeek installation rather than installing alongside it. Keep the app open for sustained downloads on iOS 15.
+
+This fork is GPLv3 with the existing Additional Terms preserved. See [LICENSE](LICENSE), [NOTICE](NOTICE), and the [protocol component license](Seeker/Soulseek.NET-master/LICENSE). This is a modified version of Soulseek.NET. It is not maintained by, endorsed by, or affiliated with the Soulseek.NET project or its author(s).
+
+The original project documentation follows. Its upstream releases, AltStore feed, and attestations describe upstream builds, not this fork's GitHub Releases.
 
  <div align="center">
 

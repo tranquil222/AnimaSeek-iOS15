@@ -1,3 +1,5 @@
+// Copyright (c) 2026 AnimaSeek iOS 15 contributors.
+// Modified 2026-11-21: unofficial iOS 15 compatibility, presentation, or fork identity updates.
 using AnimaSeek.iOS.Services;
 using AnimaSeek.iOS.UI.Accessibility;
 using AnimaSeek.iOS.UI.Components;
@@ -51,6 +53,7 @@ internal sealed class AppCoordinator : IAppRouter, IDisposable
     private string? mockPreviewUsername;
     private string? mockPreviewQuery;
     private bool mockConnectionStarted;
+    private bool mockMenuShown;
 #endif
 
     /// <summary>Creates the root hierarchy and attaches inbound route consumers before draining cold-start input.</summary>
@@ -209,6 +212,12 @@ internal sealed class AppCoordinator : IAppRouter, IDisposable
     /// <remarks>This method and its environment-variable behavior do not exist in non-Mock builds.</remarks>
     internal void ActivateMockLaunchRoute()
     {
+        if (!mockMenuShown && Environment.GetEnvironmentVariable("ANIMASEEK_UI_MENU") is "file" or "folder")
+        {
+            mockMenuShown = true;
+            bool folder = Environment.GetEnvironmentVariable("ANIMASEEK_UI_MENU") == "folder";
+            rootTabs.BeginInvokeOnMainThread(() => rootTabs.PresentViewController(OpaqueActionMenu.Preview(folder), false, null));
+        }
         if (mockConnectionStarted || mockPreviewUsername is null)
         {
             return;

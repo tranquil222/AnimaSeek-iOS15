@@ -16,3 +16,33 @@ software or any work based on it.
 
   The modified code is distributed only as the rebranded internal AnimaSeek
   Protocol Component and is based on Soulseek.NET 10.0.2.
+
+---
+
+AnimaSeek 15 — unofficial iOS 15 backport
+
+Modified 2026-11-21 by the AnimaSeek iOS 15 contributors.
+Corresponding source: https://github.com/tranquil222/AnimaSeek-iOS15
+Based on AnimaSeek: https://github.com/alexandreteles/AnimaSeek
+Originally derived from Seeker for Android: https://github.com/jackBonadies/SeekerAndroid
+
+This is a modified version, not an official upstream AnimaSeek release. It adds
+iOS 15 compatibility, older-system background-transfer fallbacks, opaque file
+and folder menus, solid navigation/tab bars, and TrollStore build packaging.
+The original copyright, license, and attribution notices remain in the source.
+The application is distributed under GPLv3; see the repository's LICENSE.
+
+This is a modified version of Soulseek.NET.  It is not maintained by,
+endorsed by, or affiliated with the Soulseek.NET project or its author(s).
+
+The bundled protocol library is the upstream AnimaSeek Protocol Component,
+based on Soulseek.NET 10.0.2. Its GPLv3 license and Additional Terms are in
+Seeker/Soulseek.NET-master/LICENSE in the source and LICENSE beside the app
+executable and in the IPA root. Its original NOTICE is bundled in the app.
+The backport uses a separate client minor identifier, 20261501, instead of
+upstream AnimaSeek's 793. Public source searches on 2026-11-21 found no known
+Soulseek client using 20261501; this is not a claim of a registry reservation.
+
+Other dependencies retain their own licenses; see THIRD-PARTY-NOTICES and
+licenses/. The About and Legal Notices screens preserve the attribution and
+modified-library notice and link to this fork's source.

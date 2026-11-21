@@ -11,6 +11,8 @@ This is a modified, GPL-3.0 fork of [AnimaSeek](https://github.com/alexandretele
 
 ## Build and install
 
+Public preview downloads, including the IPA, matching source archive, license files, and checksums, are hosted on [this fork's Releases page](https://github.com/tranquil222/AnimaSeek-iOS15/releases). These are unofficial community builds, not upstream releases. Open the IPA in TrollStore. When updating this backport, install over the existing app to retain its container; do not uninstall first. The bundle identifier remains `com.animaseek.app`, so this replaces any other AnimaSeek installed with that identifier.
+
 Run **Build iOS 15 backport** (`.github/workflows/ios15.yml`) manually in this public fork's GitHub Actions tab. It runs portable and protocol regression tests, compiles a strict mock simulator build, then builds the real ARM64 Release app without Apple code signing. The toolchain is .NET SDK 10.0.302, the iOS workload, and Xcode 26.6 on the standard `macos-26` runner. This workflow does not publish a release or use an Apple developer account.
 
 Download the **AnimaSeek-iOS15-TrollStore** artifact and extract it. It contains `AnimaSeek-iOS15.ipa`, its SHA-256 checksum, and the source commit. Transfer the IPA to the phone, share it to TrollStore, and install it. The GitHub artifact expires after three days; save a local copy. Unlike upstream releases, this artifact has no SBOM or signed release attestation.
@@ -28,7 +30,9 @@ The [hosted build](https://github.com/tranquil222/AnimaSeek-iOS15/actions/runs/4
 
 On 2026-11-21, the device owner confirmed that installation and launch succeeded on an iPhone 7 running iOS 15.8.4, and that a file downloaded and played successfully. This is a user-reported smoke check, not an independently observed comprehensive device test. Background expiration/resume and the complete appearance/accessibility matrix remain unverified.
 
-The owner reported that the file action menu (Download / Add Paused / Browse at Location) and folder action menu (Show Files / Download Folder) were too transparent. These screens use native `UIAlertController` action sheets. A suggested app-only mitigation is **Settings → Accessibility → Per-App Settings → Add App → AnimaSeek**, then **AnimaSeek → Reduce Transparency → On**. Reopen the app and the menu after changing it. The effect on this device has not yet been confirmed; no application code was changed for this report. See [Apple's per-app settings guide](https://support.apple.com/en-gb/guide/iphone/iph1f48544ab/ios) and [Reduce Transparency description](https://www.apple.com/accessibility/features/).
+The owner reported that file/folder action menus and the tab bar were too transparent over lists. Per-app Reduce Transparency did not resolve it. The 3.7.5 / 137 update replaces the primary file/folder menus with solid, scrollable sheets and gives the tab/navigation bars opaque standard and scroll-edge appearances. It also retains progress indicators across nonanimated transfer-list updates to address intermittent wiping/flashing reported while downloads continued. This update labels the app AnimaSeek 15 and uses protocol minor identifier 20261501 to distinguish the public fork from upstream AnimaSeek. Its physical-device behavior remains to be checked.
+
+Mock-only previews are available with `ANIMASEEK_UI_MENU=file` or `folder`; they never contact the live network. `scripts/capture-menu-previews.py` captures the component in light/dark and accessibility-extra-extra-extra-large on a 375 × 667-point simulator, plus the search screen. These previews validate layout on a current simulator, not iOS 15 runtime behavior or actual action routing.
 
 On a device, check cold launch, sign-in with your own Soulseek account, search, a permitted test download, background pause/foreground resume, light/dark appearance, and larger text. Automated checks use mocks and never sign in to the live Soulseek network.
 

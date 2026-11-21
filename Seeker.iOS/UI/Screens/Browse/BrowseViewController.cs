@@ -1,3 +1,5 @@
+// Copyright (c) 2026 AnimaSeek iOS 15 contributors.
+// Modified 2026-11-21: unofficial iOS 15 compatibility, presentation, or fork identity updates.
 using AnimaSeek.iOS.UI.Accessibility;
 using AnimaSeek.iOS.UI.App;
 using AnimaSeek.iOS.UI.Components;
@@ -553,27 +555,27 @@ internal sealed class BrowseFolderViewController : UIViewController
 
     private void PresentFileActions(BrowseRow row)
     {
-        var sheet = UIAlertController.Create(row.Title, row.Subtitle, UIAlertControllerStyle.ActionSheet);
-        sheet.AddAction(UIAlertAction.Create(AppStrings.Get("IosUiDownload"), UIAlertActionStyle.Default, action =>
+        var sheet = OpaqueActionMenu.Create(row.Title, row.Subtitle);
+        sheet.AddAction(OpaqueMenuAction.Create(AppStrings.Get("IosUiDownload"), UIAlertActionStyle.Default, action =>
             _ = QueueFileAsync(row.RemotePath, false)));
-        sheet.AddAction(UIAlertAction.Create(AppStrings.Get("IosUiQueuePaused"), UIAlertActionStyle.Default, action =>
+        sheet.AddAction(OpaqueMenuAction.Create(AppStrings.Get("IosUiQueuePaused"), UIAlertActionStyle.Default, action =>
             _ = QueueFileAsync(row.RemotePath, true)));
-        sheet.AddAction(UIAlertAction.Create(AppStrings.Get("IosUiCopyLink"), UIAlertActionStyle.Default, _ =>
+        sheet.AddAction(OpaqueMenuAction.Create(AppStrings.Get("IosUiCopyLink"), UIAlertActionStyle.Default, _ =>
             UIPasteboard.General.String = BuildLink(row).ToString()));
-        sheet.AddAction(UIAlertAction.Create(AppStrings.Get("IosUiShareLink"), UIAlertActionStyle.Default, _ =>
+        sheet.AddAction(OpaqueMenuAction.Create(AppStrings.Get("IosUiShareLink"), UIAlertActionStyle.Default, _ =>
             PresentViewController(
                 new UIActivityViewController([new NSString(BuildLink(row).ToString())], null),
                 true,
                 null)));
-        sheet.AddAction(UIAlertAction.Create(AppStrings.Get("IosUiViewProfile"), UIAlertActionStyle.Default, _ =>
+        sheet.AddAction(OpaqueMenuAction.Create(AppStrings.Get("IosUiViewProfile"), UIAlertActionStyle.Default, _ =>
             router.Navigate(new AppRoute.UserProfile(store.State.Username))));
-        sheet.AddAction(UIAlertAction.Create(AppStrings.Get("IosUiSendMessage"), UIAlertActionStyle.Default, _ =>
+        sheet.AddAction(OpaqueMenuAction.Create(AppStrings.Get("IosUiSendMessage"), UIAlertActionStyle.Default, _ =>
             router.Navigate(new AppRoute.Messages(store.State.Username))));
-        sheet.AddAction(UIAlertAction.Create(AppStrings.Get("IosUiSearchUser"), UIAlertActionStyle.Default, _ =>
+        sheet.AddAction(OpaqueMenuAction.Create(AppStrings.Get("IosUiSearchUser"), UIAlertActionStyle.Default, _ =>
             router.Navigate(new AppRoute.Search(
                 Target: SearchRouteTarget.User,
                 Subject: store.State.Username))));
-        sheet.AddAction(UIAlertAction.Create(AppStrings.Get("IosUiCancel"), UIAlertActionStyle.Cancel, null));
+        sheet.AddAction(OpaqueMenuAction.Create(AppStrings.Get("IosUiCancel"), UIAlertActionStyle.Cancel, null));
         PresentViewController(sheet, true, null);
     }
 
@@ -595,25 +597,24 @@ internal sealed class BrowseFolderViewController : UIViewController
     private void PresentFolderDownload(string path)
     {
         (int count, long size) = store.GetDownloadSummary(path, recursive: true);
-        var sheet = UIAlertController.Create(
+        var sheet = OpaqueActionMenu.Create(
             AppStrings.Get("IosUiDownloadThisFolder"),
-            AppStrings.Format("IosUiDownloadFolderSummary", count, AnimaSeek.iOS.UI.Presentation.FeatureValueFormatter.Bytes(size)),
-            UIAlertControllerStyle.ActionSheet);
-        sheet.AddAction(UIAlertAction.Create(AppStrings.Get("IosUiDownloadRecursively"), UIAlertActionStyle.Default, action =>
+            AppStrings.Format("IosUiDownloadFolderSummary", count, AnimaSeek.iOS.UI.Presentation.FeatureValueFormatter.Bytes(size)));
+        sheet.AddAction(OpaqueMenuAction.Create(AppStrings.Get("IosUiDownloadRecursively"), UIAlertActionStyle.Default, action =>
             _ = QueueFolderAsync(path, true, false)));
-        sheet.AddAction(UIAlertAction.Create(AppStrings.Get("IosUiDownloadFolderOnly"), UIAlertActionStyle.Default, action =>
+        sheet.AddAction(OpaqueMenuAction.Create(AppStrings.Get("IosUiDownloadFolderOnly"), UIAlertActionStyle.Default, action =>
             _ = QueueFolderAsync(path, false, false)));
-        sheet.AddAction(UIAlertAction.Create(AppStrings.Get("IosUiQueuePaused"), UIAlertActionStyle.Default, action =>
+        sheet.AddAction(OpaqueMenuAction.Create(AppStrings.Get("IosUiQueuePaused"), UIAlertActionStyle.Default, action =>
             _ = QueueFolderAsync(path, true, true)));
         SoulseekLink link = BuildFolderLink(path);
-        sheet.AddAction(UIAlertAction.Create(AppStrings.Get("IosUiCopyLink"), UIAlertActionStyle.Default, _ =>
+        sheet.AddAction(OpaqueMenuAction.Create(AppStrings.Get("IosUiCopyLink"), UIAlertActionStyle.Default, _ =>
             UIPasteboard.General.String = link.ToString()));
-        sheet.AddAction(UIAlertAction.Create(AppStrings.Get("IosUiShareLink"), UIAlertActionStyle.Default, _ =>
+        sheet.AddAction(OpaqueMenuAction.Create(AppStrings.Get("IosUiShareLink"), UIAlertActionStyle.Default, _ =>
             PresentViewController(
                 new UIActivityViewController([new NSString(link.ToString())], null),
                 true,
                 null)));
-        sheet.AddAction(UIAlertAction.Create(AppStrings.Get("IosUiCancel"), UIAlertActionStyle.Cancel, null));
+        sheet.AddAction(OpaqueMenuAction.Create(AppStrings.Get("IosUiCancel"), UIAlertActionStyle.Cancel, null));
         PresentViewController(sheet, true, null);
     }
 
