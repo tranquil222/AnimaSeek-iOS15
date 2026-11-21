@@ -34,6 +34,8 @@ The owner reported that file/folder action menus and the tab bar were too transp
 
 Mock-only previews are available with `ANIMASEEK_UI_MENU=file` or `folder`; they never contact the live network. `scripts/capture-menu-previews.py` captures the component in light/dark and accessibility-extra-extra-extra-large on a 375 × 667-point simulator, plus the search screen. These previews validate layout on a current simulator, not iOS 15 runtime behavior or actual action routing.
 
+The SDK 26 build sets `UIDesignRequiresCompatibility` to retain classic system chrome on newer iOS releases. This complements the explicit opaque backgrounds; it is not needed by iOS 15. Apple documents this flag as temporary and ignores it for apps built with SDK 27 or later, so a future toolchain upgrade must review the appearance again. Action menus open at the large sheet detent and remain scrollable for long labels and accessibility text sizes.
+
 On a device, check cold launch, sign-in with your own Soulseek account, search, a permitted test download, background pause/foreground resume, light/dark appearance, and larger text. Automated checks use mocks and never sign in to the live Soulseek network.
 
 For a limited mobile-data plan, disable AnimaSeek under **Settings → Cellular** and download over Wi-Fi. Only select folders you intend to share with other Soulseek users.

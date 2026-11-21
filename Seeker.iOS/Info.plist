@@ -6,6 +6,8 @@
     <string>AnimaSeek 15</string>
     <key>CFBundleIdentifier</key>
     <string>com.animaseek.app</string>
+    <key>UIDesignRequiresCompatibility</key>
+    <true/>
     <key>CFBundleName</key>
     <string>AnimaSeek</string>
     <key>CFBundleShortVersionString</key>

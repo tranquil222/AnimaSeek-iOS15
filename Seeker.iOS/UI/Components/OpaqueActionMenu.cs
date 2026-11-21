@@ -20,8 +20,7 @@ internal sealed class OpaqueActionMenu : UINavigationController
         View.AccessibilityViewIsModal = true;
         if (SheetPresentationController is { } sheet)
         {
-            sheet.Detents = [UISheetPresentationControllerDetent.CreateMediumDetent(),
-                UISheetPresentationControllerDetent.CreateLargeDetent()];
+            sheet.Detents = [UISheetPresentationControllerDetent.CreateLargeDetent()];
             sheet.PrefersGrabberVisible = true;
             sheet.PrefersScrollingExpandsWhenScrolledToEdge = true;
         }

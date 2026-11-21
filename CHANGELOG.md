@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Open the opaque action menus at full sheet height so actions are immediately visible on small screens. Enabled the SDK 26 classic-UI compatibility flag to prevent newer iOS versions from layering glass over these surfaces; iOS 15 does not depend on that flag.
 - Reused per-cell progress indicators and disabled animated transfer-list snapshots to prevent progress bars from being repeatedly removed/recreated during updates. Transfer operations themselves are unchanged.
 - Replaced the search file/folder and browse file/folder-download action sheets with opaque, scrollable menus. Long filenames and action labels wrap with Dynamic Type, Cancel remains in the navigation bar, and actions execute after dismissal.
 - Made the tab and navigation bars opaque in both standard and scroll-edge appearances so list content cannot show through their labels.
