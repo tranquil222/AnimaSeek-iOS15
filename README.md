@@ -2,6 +2,10 @@
 
 **[Download the IPA and matching source](https://github.com/tranquil222/AnimaSeek-iOS15/releases)** · **[Installation, testing, and limitations](IOS15.md)**
 
+<p><img src="docs/ios15/file-dark.png" width="200" alt="Opaque file actions in dark mode"> <img src="docs/ios15/folder-light.png" width="200" alt="Opaque folder actions in light mode"> <img src="docs/ios15/search-bars.png" width="200" alt="Search results with solid tab and navigation bars"></p>
+
+Preview images use mock data on a current iOS simulator at the iPhone 7 screen size; they are not iOS 15 device screenshots.
+
 Install the IPA through TrollStore on an already compatible device. To update this backport, install over the existing app; uninstalling first removes its app data. It shares the original app's bundle identifier, so it replaces another AnimaSeek installation rather than installing alongside it. Keep the app open for sustained downloads on iOS 15.
 
 This fork is GPLv3 with the existing Additional Terms preserved. See [LICENSE](LICENSE), [NOTICE](NOTICE), and the [protocol component license](Seeker/Soulseek.NET-master/LICENSE). This is a modified version of Soulseek.NET. It is not maintained by, endorsed by, or affiliated with the Soulseek.NET project or its author(s).

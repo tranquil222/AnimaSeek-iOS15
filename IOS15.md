@@ -39,3 +39,15 @@ The SDK 26 build sets `UIDesignRequiresCompatibility` to retain classic system c
 On a device, check cold launch, sign-in with your own Soulseek account, search, a permitted test download, background pause/foreground resume, light/dark appearance, and larger text. Automated checks use mocks and never sign in to the live Soulseek network.
 
 For a limited mobile-data plan, disable AnimaSeek under **Settings → Cellular** and download over Wi-Fi. Only select folders you intend to share with other Soulseek users.
+
+## Published readability preview
+
+[Version 3.7.5 / build 137](https://github.com/tranquil222/AnimaSeek-iOS15/releases/tag/v3.7.5-ios15.1) was built from `f8efcc10663988be410e2496672a9c07d50421c3`. [The final hosted run](https://github.com/tranquil222/AnimaSeek-iOS15/actions/runs/44925326776) passed all 649 tests, both strict builds, and the native iOS 15 deployment-floor check. The downloaded IPA and exact corresponding source archive were independently hashed and checked before publication.
+
+- IPA SHA-256: `bb69aa78a2747f61967d5fb51106eb11538ce618573dd72573afb5233749672c`.
+- Source archive SHA-256: `7cb965465170479ee193cef740bbca8ee3d21e2459dbdfbb6b9e29d9b5f6f037`.
+- Final simulator previews show opaque dark/light full-height menus and solid search/tab bars. At accessibility-extra-extra-extra-large, context text wraps into scrollable content while Cancel stays visible. These captures do not test action callbacks, scrolling gestures, transfer-animation stability, or the iOS 15 runtime.
+- The earlier candidate at `aef0e9e` still displayed system glass on the current simulator and was not released; the final build enables classic UI compatibility and opens menus at full height.
+- The installed .NET iOS runtime pack was 10.0.11. Its license and third-party notices were checked against the bundled files named for 10.0.10 and are byte-identical.
+
+The initial port has user-confirmed download/playback evidence, but this preview still needs physical-device confirmation of the new menus, progress behavior, and distinct client identity.
